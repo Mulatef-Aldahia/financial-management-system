@@ -6,11 +6,16 @@ use App\Http\Controllers\AuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-// مسارات تسجيل الدخول والخروج
+// ==========================================
+// مسارات المصادقة (تسجيل الدخول، التسجيل، والخروج)
+// ==========================================
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// ➕ هذا هو السطر الجديد الخاص بالتسجيل:
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 // ==========================================
@@ -35,5 +40,4 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/store-name', [\App\Http\Controllers\SettingsController::class, 'updateStoreName'])->name('settings.store-name');
     Route::post('/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('settings.password');
 
-
-    });
+});
