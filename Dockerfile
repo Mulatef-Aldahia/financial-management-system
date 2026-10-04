@@ -1,9 +1,15 @@
 # استخدام نسخة PHP حديثة
 FROM php:8.2-cli
 
-# تثبيت الإضافات اللازمة لربط قاعدة البيانات
-RUN apt-get update -y && apt-get install -y unzip libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql zip
+# تثبيت الإضافات والمكتبات الأساسية التي يطلبها Laravel
+RUN apt-get update -y && apt-get install -y \
+    git \
+    unzip \
+    libzip-dev \
+    libonig-dev \
+    libxml2-dev \
+    curl \
+    && docker-php-ext-install pdo pdo_mysql mbstring xml bcmath zip
 
 # تثبيت أداة Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
