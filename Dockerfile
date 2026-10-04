@@ -1,5 +1,5 @@
-# استخدام نسخة PHP حديثة
-FROM php:8.2-cli
+# استخدام نسخة PHP 8.4
+FROM php:8.4-cli
 
 # تثبيت الإضافات والمكتبات الأساسية التي يطلبها Laravel
 RUN apt-get update -y && apt-get install -y \
