@@ -45,21 +45,21 @@
             <div id="expenses-container" class="space-y-3">
                 @if($isEdit && $entry->expenses->count() > 0)
                     @foreach($entry->expenses as $index => $exp)
-                        <div class="expense-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-2 rounded-lg border border-gray-100">
+                        <div class="expense-row grid grid-cols-1 gap-2 items-center bg-gray-50 p-3 rounded-lg border border-gray-100 sm:grid-cols-12">
                             <!-- مبلغ المصروف (إلزامي) -->
-                            <div class="col-span-3"><input type="number" name="expenses[{{$index}}][amount]" value="{{ $exp->amount }}" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" step="0.01" required placeholder="المبلغ *"></div>
-                            <div class="col-span-4"><input type="text" name="expenses[{{$index}}][recipient]" value="{{ $exp->recipient }}" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المستلم"></div>
-                            <div class="col-span-4"><input type="text" name="expenses[{{$index}}][statement]" value="{{ $exp->statement }}" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="البيان"></div>
-                            <div class="col-span-1 text-center"><button type="button" onclick="this.closest('.expense-row').remove()" class="text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
+                            <div class="col-span-1 sm:col-span-3"><input type="number" name="expenses[{{$index}}][amount]" value="{{ $exp->amount }}" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" step="0.01" required placeholder="المبلغ *"></div>
+                            <div class="col-span-1 sm:col-span-4"><input type="text" name="expenses[{{$index}}][recipient]" value="{{ $exp->recipient }}" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المستلم"></div>
+                            <div class="col-span-1 sm:col-span-4"><input type="text" name="expenses[{{$index}}][statement]" value="{{ $exp->statement }}" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="البيان"></div>
+                            <div class="col-span-1 text-center sm:col-span-1"><button type="button" onclick="this.closest('.expense-row').remove()" class="text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
                         </div>
                     @endforeach
                 @else
-                    <div class="expense-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-2 rounded-lg border border-gray-100">
+                    <div class="expense-row grid grid-cols-1 gap-2 items-center bg-gray-50 p-3 rounded-lg border border-gray-100 sm:grid-cols-12">
                         <!-- مبلغ المصروف (إلزامي) -->
-                        <div class="col-span-3"><input type="number" name="expenses[0][amount]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المبلغ *" step="0.01" required></div>
-                        <div class="col-span-4"><input type="text" name="expenses[0][recipient]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المستلم"></div>
-                        <div class="col-span-4"><input type="text" name="expenses[0][statement]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="البيان"></div>
-                        <div class="col-span-1 text-center"><button type="button" onclick="this.closest('.expense-row').remove()" class="text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
+                        <div class="col-span-1 sm:col-span-3"><input type="number" name="expenses[0][amount]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المبلغ *" step="0.01" required></div>
+                        <div class="col-span-1 sm:col-span-4"><input type="text" name="expenses[0][recipient]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المستلم"></div>
+                        <div class="col-span-1 sm:col-span-4"><input type="text" name="expenses[0][statement]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="البيان"></div>
+                        <div class="col-span-1 text-center sm:col-span-1"><button type="button" onclick="this.closest('.expense-row').remove()" class="text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
                     </div>
                 @endif
             </div>
@@ -77,35 +77,34 @@
 </form>
 
 <!-- عرض السجل تحت الإدخال مباشرة -->
-<div class="mt-8 glass-card p-6">
-    <h3 class="text-lg font-bold text-gray-700 mb-4"><i class="fa-solid fa-clock-rotate-left text-blue-900"></i> السجل اليومي</h3>
-    <table class="w-full text-sm text-right">
-        <thead class="bg-gray-100 text-gray-600">
-            <tr><th class="p-3">التاريخ</th><th class="p-3">الإيراد</th><th class="p-3">المنصرف</th><th class="p-3">الصافي</th><th class="p-3 text-center">إجراء</th></tr>
-        </thead>
-        <tbody>
-            @foreach($entries as $e)
-                @php
-                    $rev = $e->morning_shift + $e->evening_shift + $e->bank_feed;
-                    $exp = $e->expenses->sum('amount');
-                    $net = $rev - $exp;
-                @endphp
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-3 font-bold">{{ $e->date }}</td>
-                    <td class="p-3 text-emerald-600">{{ number_format($rev, 2) }}</td>
-                    <td class="p-3 text-rose-600">{{ number_format($exp, 2) }}</td>
-                    <td class="p-3 font-bold {{ $net >= 0 ? 'text-emerald-600' : 'text-rose-600' }}" dir="ltr">{{ $net > 0 ? '+' : '' }}{{ number_format($net, 2) }}</td>
-                    <td class="p-3 text-center flex justify-center gap-2">
-                        <a href="{{ route('daily-entry.edit', $e->id) }}" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200" title="تعديل"><i class="fa-solid fa-pen"></i></a>
-                        <form action="{{ route('daily-entry.destroy', $e->id) }}" method="POST" onsubmit="return confirm('تأكيد الحذف؟');">
-                            @csrf @method('DELETE')
-                            <button class="bg-rose-100 text-rose-600 p-2 rounded hover:bg-rose-200" title="حذف"><i class="fa-solid fa-trash"></i></button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+<div class="mt-8 glass-card p-4 md:p-6">
+    <div class="mb-4 flex items-center justify-between gap-3">
+        <h3 class="text-lg font-bold text-gray-700"><i class="fa-solid fa-clock-rotate-left ml-2 text-blue-900"></i> السجل اليومي</h3>
+        <span class="text-xs text-gray-500">{{ $entries->count() }} سجل</span>
+    </div>
+    <div class="hidden overflow-x-auto md:block">
+        <table class="w-full min-w-[650px] text-right text-sm">
+            <thead class="bg-gray-100 text-gray-600"><tr><th class="p-3">التاريخ</th><th class="p-3">الإيراد</th><th class="p-3">المنصرف</th><th class="p-3">الصافي</th><th class="p-3 text-center">إجراء</th></tr></thead>
+            <tbody>
+                @foreach($entries as $e)
+                    @php $rev = $e->morning_shift + $e->evening_shift + $e->bank_feed; $exp = $e->expenses->sum('amount'); $net = $rev - $exp; @endphp
+                    <tr class="border-b hover:bg-gray-50"><td class="p-3 font-bold">{{ $e->date }}</td><td class="p-3 text-emerald-600">{{ number_format($rev, 2) }}</td><td class="p-3 text-rose-600">{{ number_format($exp, 2) }}</td><td class="p-3 font-bold {{ $net >= 0 ? 'text-emerald-600' : 'text-rose-600' }}" dir="ltr">{{ $net > 0 ? '+' : '' }}{{ number_format($net, 2) }}</td><td class="flex justify-center gap-2 p-3"><a href="{{ route('daily-entry.edit', $e->id) }}" class="rounded bg-blue-100 p-2 text-blue-600 hover:bg-blue-200" title="تعديل"><i class="fa-solid fa-pen"></i></a><form action="{{ route('daily-entry.destroy', $e->id) }}" method="POST" onsubmit="return confirm('تأكيد الحذف؟');">@csrf @method('DELETE')<button class="rounded bg-rose-100 p-2 text-rose-600 hover:bg-rose-200" title="حذف"><i class="fa-solid fa-trash"></i></button></form></td></tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="space-y-3 md:hidden">
+        @forelse($entries as $e)
+            @php $rev = $e->morning_shift + $e->evening_shift + $e->bank_feed; $exp = $e->expenses->sum('amount'); $net = $rev - $exp; @endphp
+            <article class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <div class="mb-3 flex items-center justify-between"><strong class="text-blue-900">{{ $e->date }}</strong><strong class="{{ $net >= 0 ? 'text-emerald-600' : 'text-rose-600' }}" dir="ltr">{{ $net > 0 ? '+' : '' }}{{ number_format($net, 2) }} د.ك</strong></div>
+                <div class="grid grid-cols-2 gap-2 text-sm"><span>الوارد: <b class="text-emerald-600" dir="ltr">{{ number_format($rev, 2) }}</b></span><span>المنصرف: <b class="text-rose-600" dir="ltr">{{ number_format($exp, 2) }}</b></span></div>
+                <div class="mt-3 flex gap-2 border-t border-gray-200 pt-3"><a href="{{ route('daily-entry.edit', $e->id) }}" class="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-blue-100 font-bold text-blue-700"><i class="fa-solid fa-pen"></i> تعديل</a><form class="flex-1" action="{{ route('daily-entry.destroy', $e->id) }}" method="POST" onsubmit="return confirm('تأكيد الحذف؟');">@csrf @method('DELETE')<button class="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-rose-100 font-bold text-rose-700"><i class="fa-solid fa-trash"></i> حذف</button></form></div>
+            </article>
+        @empty
+            <div class="py-6 text-center text-gray-500">لا توجد حركات مسجلة بعد.</div>
+        @endforelse
+    </div>
 </div>
 
 <!-- كود الجافاسكربت لإضافة صفوف المصروفات -->
@@ -115,12 +114,12 @@
     function addExpenseRow() {
         const container = document.getElementById('expenses-container');
         const rowHTML = `
-            <div class="expense-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-2 rounded-lg border border-gray-100 mt-2">
+            <div class="expense-row grid grid-cols-1 gap-2 items-center bg-gray-50 p-3 rounded-lg border border-gray-100 sm:grid-cols-12 mt-2">
                 <!-- مبلغ المصروف (إلزامي) -->
-                <div class="col-span-3"><input type="number" name="expenses[${expenseIndex}][amount]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المبلغ *" step="0.01" required></div>
-                <div class="col-span-4"><input type="text" name="expenses[${expenseIndex}][recipient]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المستلم"></div>
-                <div class="col-span-4"><input type="text" name="expenses[${expenseIndex}][statement]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="البيان"></div>
-                <div class="col-span-1 text-center"><button type="button" onclick="this.closest('.expense-row').remove()" class="text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
+                <div class="col-span-1 sm:col-span-3"><input type="number" name="expenses[${expenseIndex}][amount]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المبلغ *" step="0.01" required></div>
+                <div class="col-span-1 sm:col-span-4"><input type="text" name="expenses[${expenseIndex}][recipient]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="المستلم"></div>
+                <div class="col-span-1 sm:col-span-4"><input type="text" name="expenses[${expenseIndex}][statement]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="البيان"></div>
+                <div class="col-span-1 text-center sm:col-span-1"><button type="button" onclick="this.closest('.expense-row').remove()" class="text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', rowHTML);
